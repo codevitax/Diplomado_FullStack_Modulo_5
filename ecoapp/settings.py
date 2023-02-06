@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'inventario',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+
+# ~/M/4/2/M/ecoapp/model
 
 TIME_ZONE = 'UTC'
 
