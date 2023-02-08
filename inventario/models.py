@@ -1,5 +1,6 @@
 from django.db import models
-
+from .validators import validar_par
+from django.core.validators import EmailValidator
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=255)
@@ -13,10 +14,10 @@ class ProductUnits(models.TextChoices):
     KG = 'kg', 'Kilogramos',
 
 class Product(models.Model):
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=255, validators=[EmailValidator("el email no es valido")])
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     descripcion = models.TextField()
-    precio = models.DecimalField(decimal_places=2, max_digits=10)
+    precio = models.DecimalField(decimal_places=2, max_digits=10, validators=[validar_par])
     unidades = models.CharField(
         max_length = 2,
         choices = ProductUnits.choices,
