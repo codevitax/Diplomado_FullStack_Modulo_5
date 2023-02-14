@@ -1,9 +1,10 @@
 from django.db import models
 from .validators import validar_par
 from django.core.validators import EmailValidator
+from .validators import validation_categoria
 
 class Categoria(models.Model):
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=255, validators=[validation_categoria,])
 
 # Esto es para que en el admin muestro los objetos con sus nombres especificos
     def __str__(self):

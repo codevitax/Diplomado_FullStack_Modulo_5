@@ -4,6 +4,11 @@ from .models import Categoria
 from .models import Product
 from .forms import ProductForm
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
+from .serializers import CategoriaSerializer, ProductoSerializer, ContactSerializer
+from rest_framework import generics
+from rest_framework.decorators import api_view
+from django.http import JsonResponse
 
 def index(request):
     return HttpResponse("Hola mundo")
@@ -46,3 +51,50 @@ def productoFormView(request):
     return render(request, "form_productos.html", {
         "form": form
     })
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+class CategoriaCreateView(generics.CreateAPIView, generics.ListAPIView):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+@api_view(["GET"])
+def categoria_count(request):
+    try:
+        cantidad = Categoria.objects.count()
+        return JsonResponse({
+            "cantidad": cantidad
+            },
+            safe=False,
+            status=200
+        )
+    except Exception as e:
+        return JsonResponse({"mensaje": str(e)}, status=400)
+
+@api_view(["GET"])
+def productos_en_unidades(request):
+    """
+    Esto solo muestra productos por unidades
+    """
+    try:
+        productos = Product.objects.filter(unidades="u")
+        return JsonResponse(
+            ProductoSerializer(productos, many=True).data,
+            safe=False,
+            status=200,
+        )
+    except Exception as e:
+        return JsonResponse({"mensaje": str(e)}, status=400)
+
+@api_view(["POST"])
+def enviar_mensaje(request):
+    """
+    HOLA POST
+    """
+    cs = ContactSerializer(data=request.data)
+    if cs.is_valid():
+        return JsonResponse({"mensaje": "Mensaje enviado correctamente"}, status=200)
+    else:
+        return JsonResponse({"mensaje": cs.errors}, status=400)
