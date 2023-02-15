@@ -9,6 +9,12 @@ class Categoria(models.Model):
 # Esto es para que en el admin muestro los objetos con sus nombres especificos
     def __str__(self):
         return self.nombre
+    
+    class Meta:
+        permissions = [
+            ("reporte_cantidad", "Visualizar el reporte de cantidad"),
+            ("reporte_detalle", "Reporte detalle de cantidades"),
+        ]
 
 class ProductUnits(models.TextChoices):
     UNITS = 'u', 'Unidades',

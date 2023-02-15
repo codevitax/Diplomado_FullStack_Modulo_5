@@ -9,6 +9,13 @@ from .serializers import CategoriaSerializer, ProductoSerializer, ContactSeriali
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+from .permissions import IsUserAlmacen
+from .utils import permission_required
+import logging
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     return HttpResponse("Hola mundo")
@@ -55,15 +62,18 @@ def productoFormView(request):
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = [IsAuthenticated]
 
 class CategoriaCreateView(generics.CreateAPIView, generics.ListAPIView):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
 
 @api_view(["GET"])
+@permission_classes([IsUserAlmacen])
 def categoria_count(request):
     try:
         cantidad = Categoria.objects.count()
+        logger.info("La cantidad se mostro satisfactoriamente")
         return JsonResponse({
             "cantidad": cantidad
             },
@@ -74,6 +84,7 @@ def categoria_count(request):
         return JsonResponse({"mensaje": str(e)}, status=400)
 
 @api_view(["GET"])
+@permission_required(["invetario.view_categoria"])
 def productos_en_unidades(request):
     """
     Esto solo muestra productos por unidades
